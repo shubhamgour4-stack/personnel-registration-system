@@ -17,16 +17,31 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Auto-Discover API Project Path
+      run: |
+        echo "Scanning runner environment for the API project..."
+        PROJECT_PATH=$(find . -iname "*api*.csproj" | head -n 1)
+        
+        if [ -z "$PROJECT_PATH" ]; then
+          echo "❌ ERROR: No API project file found on the cloud server!"
+          echo "This means your code files did not successfully upload to GitHub. Here is the folder structure currently on the server:"
+          ls -R
+          exit 1
+        fi
+        
+        echo "✅ Found project file at: $PROJECT_PATH"
+        echo "API_PROJ=$PROJECT_PATH" >> $GITHUB_ENV
+
     - name: Restore Project Dependencies
-      run: dotnet restore src/Presentation/PRS.API/PRS.API.csproj
+      run: dotnet restore ${{ env.API_PROJ }}
 
-    - name: Compile Backend Binaries (Release Mode)
-      run: dotnet build src/Presentation/PRS.API/PRS.API.csproj --configuration Release --no-restore
+    - name: Compile Backend Binaries
+      run: dotnet build ${{ env.API_PROJ }} --configuration Release --no-restore
 
-    - name: Publish Production Payload Packages
-      run: dotnet publish src/Presentation/PRS.API/PRS.API.csproj -c Release -o ${{env.DOTNET_ROOT}}/compiled_api_package
+    - name: Publish Production Payload
+      run: dotnet publish ${{ env.API_PROJ }} -c Release -o ${{env.DOTNET_ROOT}}/compiled_api_package
 
-    - name: Deploy Payload Package to Azure App Service
+    - name: Deploy Payload Package to Azure
       uses: azure/webapps-deploy@v3
       with:
         app-name: 'api-prs-enterprise'
