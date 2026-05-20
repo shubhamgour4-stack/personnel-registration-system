@@ -7,10 +7,6 @@ on:
 jobs:
   build-and-deploy-services:
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: ./Personnel-Registration-System
 
     steps:
     - name: Clone Code Repository
@@ -22,13 +18,13 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore Project Dependencies
-      run: dotnet restore Personnel-Registration-System.sln
+      run: dotnet restore Personnel-Registration-System/src/Presentation/PRS.API/PRS.API.csproj
 
     - name: Compile Backend Binaries (Release Mode)
-      run: dotnet build Personnel-Registration-System.sln --configuration Release --no-restore
+      run: dotnet build Personnel-Registration-System/src/Presentation/PRS.API/PRS.API.csproj --configuration Release --no-restore
 
     - name: Publish Production Payload Packages
-      run: dotnet publish src/Presentation/PRS.API/PRS.API.csproj -c Release -o ${{env.DOTNET_ROOT}}/compiled_api_package
+      run: dotnet publish Personnel-Registration-System/src/Presentation/PRS.API/PRS.API.csproj -c Release -o ${{env.DOTNET_ROOT}}/compiled_api_package
 
     - name: Deploy Payload Package to Azure App Service
       uses: azure/webapps-deploy@v3
@@ -36,5 +32,3 @@ jobs:
         app-name: 'api-prs-enterprise'
         publish-profile: ${{secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}
         package: ${{env.DOTNET_ROOT}}/compiled_api_package
-
-        
