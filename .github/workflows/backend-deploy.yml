@@ -18,10 +18,10 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore Project Dependencies
-      run: dotnet restore PersonnelRegistrationSystem.sln
+      run: dotnet restore Personnel-Registration-System.sln
 
     - name: Compile Backend Binaries (Release Mode)
-      run: dotnet build PersonnelRegistrationSystem.sln --configuration Release --no-restore
+      run: dotnet build Personnel-Registration-System.sln --configuration Release --no-restore
 
     - name: Publish Production Payload Packages
       run: dotnet publish src/Presentation/PRS.API/PRS.API.csproj -c Release -o ${{env.DOTNET_ROOT}}/compiled_api_package
