@@ -7,6 +7,10 @@ on:
 jobs:
   build-and-deploy-services:
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./Personnel-Registration-System
 
     steps:
     - name: Clone Code Repository
@@ -29,6 +33,6 @@ jobs:
     - name: Deploy Payload Package to Azure App Service
       uses: azure/webapps-deploy@v3
       with:
-        app-name: 'api-prs-enterprise' # Change this to your actual Azure Web App name if different
+        app-name: 'api-prs-enterprise'
         publish-profile: ${{secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}
         package: ${{env.DOTNET_ROOT}}/compiled_api_package
