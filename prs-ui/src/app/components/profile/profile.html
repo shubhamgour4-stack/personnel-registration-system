@@ -1,0 +1,117 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Consolidated Personnel Registration</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/dashboard">Search</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="d-flex flex-column justify-content-center align-items-center mt-5 pt-5" *ngIf="isLoading">
+  <div class="spinner-border text-danger mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+  <h5 class="text-muted">Fetching Master Data from Azure SQL...</h5>
+</div>
+
+<div class="container-fluid mt-4 px-5" *ngIf="!isLoading && profileData">
+  
+  <div class="d-flex justify-content-end mb-2">
+    <a routerLink="/dashboard" class="text-danger text-decoration-none small">Back to : Profile Search</a>
+  </div>
+
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a class="nav-link active text-danger fw-bold border-bottom-0" style="border-top: 3px solid #dc3545;">Profile Information</a>
+    </li>
+  </ul>
+
+  <div class="card shadow-sm border-0 mb-5">
+    <div class="card-body p-4">
+      
+      <h6 class="text-danger mb-3 border-bottom pb-2">Personnel Identity (System Generated)</h6>
+      
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="enterprise-label">Full Name</label>
+          <input type="text" class="form-control enterprise-input bg-light text-muted" [value]="profileData?.name" readonly disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="enterprise-label">Employee ID</label>
+          <input type="text" class="form-control enterprise-input bg-light text-muted" [value]="profileData?.employee_ID" readonly disabled>
+        </div>
+      </div>
+
+      <div class="row mb-5">
+        <div class="col-md-6">
+          <label class="enterprise-label">Email Address</label>
+          <input type="email" class="form-control enterprise-input bg-light text-muted" [value]="profileData?.email_ID" readonly disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="enterprise-label">System GUID</label>
+          <input type="text" class="form-control enterprise-input bg-light text-muted" [value]="profileData?.guid" readonly disabled>
+        </div>
+      </div>
+
+      <h6 class="text-danger mb-3 border-bottom pb-2">Assignment Details</h6>
+      
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="enterprise-label">Employment Status *</label>
+          <select class="form-select enterprise-input" [(ngModel)]="selectedStatusId">
+            <option [ngValue]="null" disabled>Select Status...</option>
+            <option *ngFor="let status of employmentStatuses" [value]="status.employment_Status_ID">
+              {{ status.employment_Status }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="enterprise-label">Line of Service *</label>
+          <select class="form-select enterprise-input" [(ngModel)]="selectedLosId">
+            <option [ngValue]="null" disabled>Select Line of Service...</option>
+            <option *ngFor="let los of linesOfService" [value]="los.loS_ID">
+              {{ los.lineOfService }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="enterprise-label">Grade *</label>
+          <select class="form-select enterprise-input" [(ngModel)]="selectedGradeId">
+            <option [ngValue]="null" disabled>Select Grade...</option>
+            <option *ngFor="let grade of grades" [value]="grade.grade_ID">
+              {{ grade.rank }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="enterprise-label">Work Office Location * (Filtered by: {{ profileData?.guid_Country }})</label>
+          <select class="form-select enterprise-input" [(ngModel)]="selectedOfficeId">
+            <option [ngValue]="null" disabled>Select Office...</option>
+            <option *ngFor="let office of officeLocations" [value]="office.work_Office_ID">
+              {{ office.work_Office_Description }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label class="enterprise-label">Portfolio Required *</label>
+          <select class="form-select enterprise-input" [(ngModel)]="portfolioRequired">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-3 mt-5">
+        <button class="btn btn-outline-secondary px-4" routerLink="/dashboard">Cancel</button>
+        <button class="btn btn-danger px-4" (click)="onSave()">Save Profile</button>
+      </div>
+
+    </div>
+  </div>
+</div>

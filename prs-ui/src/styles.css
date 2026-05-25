@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Enterprise Form Input Styling */
+.enterprise-input {
+  border: none !important;
+  border-bottom: 1px solid #ced4da !important;
+  border-radius: 0 !important;
+  padding-left: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.enterprise-input:focus {
+  border-bottom: 2px solid #dc3545 !important; /* Red accent on focus */
+}
+
+.enterprise-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 0;
+}

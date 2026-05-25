@@ -7,7 +7,7 @@ using PRS.Core.Interfaces;
 
 namespace PRS.API.Controllers
 {
-    [Authorize] // <--- The Security Lock is now active!
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PersonnelController : ControllerBase
@@ -34,7 +34,7 @@ namespace PRS.API.Controllers
                 Email_ID = dto.Email_ID,
                 Guid_Country = dto.Guid_Country,
                 Guid = generatedGuid,
-                Record_Status = true, 
+                Record_Status = "Active", // <--- Changed from true to "Active"
                 Created_Date = DateTime.UtcNow,
                 Updated_Date = DateTime.UtcNow
             };
@@ -47,11 +47,27 @@ namespace PRS.API.Controllers
 
         // --- STEP 2: SEARCH PROFILES ---
         [HttpGet("search")]
-        public async Task<IActionResult> SearchProfiles()
+        public async Task<IActionResult> SearchProfiles([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email, [FromQuery] string? status)
         {
-            var profiles = await _unitOfWork.PersonnelGuids.GetAllAsync();
+            var allProfiles = await _unitOfWork.PersonnelGuids.GetAllAsync();
+            var query = allProfiles.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(firstName))
+                query = query.Where(p => p.Name != null && p.Name.Contains(firstName, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(lastName))
+                query = query.Where(p => p.Name != null && p.Name.Contains(lastName, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(email))
+                query = query.Where(p => p.Email_ID != null && p.Email_ID.Contains(email, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(status) && status != "All")
+            {
+                // <--- Now directly comparing the string to "Active"
+                query = query.Where(p => p.Record_Status != null && p.Record_Status.Equals(status, StringComparison.OrdinalIgnoreCase)); 
+            }
             
-            var searchResults = profiles.Select(p => new PersonnelSearchResultDto
+            var searchResults = query.Select(p => new PersonnelSearchResultDto
             {
                 Unique_ID = p.Unique_ID,
                 Name = p.Name,

@@ -71,6 +71,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPseudoPartyIdService, PseudoPartyIdService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add this to tell .NET to trust your Angular application
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policy => policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -82,10 +91,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// --- 5. ACTIVATE SECURITY MIDDLEWARE ---
-app.UseAuthentication(); // Must be BEFORE Authorization
+// 1. Let Angular in FIRST
+app.UseCors("AllowAngularApp"); 
+
+// 2. THEN check their security ID
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

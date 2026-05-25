@@ -24,7 +24,9 @@ namespace PRS.Application.Services
             if (office == null || grade == null || los == null || status == null)
                 return null;
 
-            var portfolioCode = dto.Portfolio_Required ? "y" : "n";
+            // THE FIX: Check if the string is exactly "Yes"
+            // THE FIX: We are now checking for the single letter "Y" from Angular
+            var portfolioCode = (dto.Portfolio_Required == "Y") ? "y" : "n";
 
             // Format: [OfficeCode]*[GradeCode]*[LOSCode]*[StatusCode]*[Portfolio]
             string pseudoId = $"{office.Work_Office_Code.ToLower()}*{grade.Rank_Code.ToLower()}*{los.LOS_CODE.ToLower()}*{status.Employment_Status_Code.ToLower()}*{portfolioCode}";
