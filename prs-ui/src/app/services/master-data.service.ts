@@ -1,38 +1,47 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MasterDataService {
 
-  private apiUrl = 'http://localhost:5076/api/MasterData';
+  private apiUrl = `${environment.apiBaseUrl}/MasterData`;
 
   constructor(private http: HttpClient) { }
 
-  // We don't necessarily need the JWT token here if the MasterDataController 
-  // doesn't have the [Authorize] tag, but it's good practice if it does!
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('jwt_token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  }
-
+  /**
+   * Get employment status values from master data
+   * Authorization header is automatically attached by AuthHttpInterceptor
+   */
   getEmploymentStatuses(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/employmentstatus`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/employmentstatus`);
   }
 
+  /**
+   * Get grade values from master data
+   * Authorization header is automatically attached by AuthHttpInterceptor
+   */
   getGrades(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/grades`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/grades`);
   }
 
+  /**
+   * Get line of service values from master data
+   * Authorization header is automatically attached by AuthHttpInterceptor
+   */
   getLineOfServices(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/lineofservice`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/lineofservice`);
   }
 
+  /**
+   * Get office locations for a specific country from master data
+   * Authorization header is automatically attached by AuthHttpInterceptor
+   * @param countryCode ISO country code
+   */
   getOfficeLocations(countryCode: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/officelocations/${countryCode}`, { headers: this.getHeaders() });
+    return this.http.get<any[]>(`${this.apiUrl}/officelocations/${countryCode}`);
   }
 }

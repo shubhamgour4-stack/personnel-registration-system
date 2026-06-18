@@ -16,6 +16,7 @@ namespace PRS.Application.DTOs
         public string Name { get; set; }
         public string Guid { get; set; }
         public string Employee_ID { get; set; }
+        public string Email_ID { get; set; }
         public string Record_Status { get; set; }
         // If they have a completed profile, show the Pseudo ID, otherwise null
         public string Pseudo_Party_ID { get; set; } 

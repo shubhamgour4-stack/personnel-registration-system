@@ -70,6 +70,11 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPseudoPartyIdService, PseudoPartyIdService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+// Register MFT Bulk Processing Integration Stack
+// Ensure these lines look exactly like this to match our new Clean Architecture layout:
+builder.Services.AddScoped<PRS.Application.Interfaces.IMftRepository, PRS.Infrastructure.Repositories.MftRepository>();
+builder.Services.AddScoped<PRS.Application.Interfaces.IMftCsvParser, PRS.Infrastructure.Services.MftCsvParser>();
+builder.Services.AddScoped<PRS.Application.Interfaces.IMftIntegrationEngine, PRS.Application.Services.MftIntegrationEngine>();
 
 // Add this to tell .NET to trust your Angular application
 builder.Services.AddCors(options =>

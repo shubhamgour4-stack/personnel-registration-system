@@ -17,6 +17,10 @@ namespace PRS.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<MftFileHistory> MftFileHistories { get; set; }
+        public DbSet<MftFileStaging> MftFileStagings { get; set; }
+        public DbSet<MftFileError> MftFileErrors { get; set; }
+        public DbSet<PersonnelMftAudit> PersonnelMftAudits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +40,14 @@ namespace PRS.Infrastructure.Data
             // =========================================================
             modelBuilder.Entity<PersonnelGuid>().ToTable("Personnel_Guid").HasKey(p => p.Unique_ID);
             modelBuilder.Entity<PersonnelGlobal>().ToTable("Personnel_Global").HasKey(pg => pg.ID);
+            // Add this line inside your OnModelCreating method:
+            modelBuilder.Entity<MftFileError>().ToTable("MFT_File_Errors").HasKey(e => e.ErrorId);
+
+            // Explicit Primary Key Mappings for the complete MFT Processing Stack
+            modelBuilder.Entity<MftFileHistory>().ToTable("MFT_File_History").HasKey(h => h.FileId);
+            modelBuilder.Entity<MftFileStaging>().ToTable("MFT_File_Staging").HasKey(s => s.StagingId);
+            modelBuilder.Entity<MftFileError>().ToTable("MFT_File_Errors").HasKey(e => e.ErrorId);
+            modelBuilder.Entity<PersonnelMftAudit>().ToTable("Personnel_MFT_Audit").HasKey(a => a.AuditId);
 
             modelBuilder.Entity<PersonnelGlobal>()
                 .HasOne(pg => pg.PersonnelGuid)
