@@ -49,22 +49,26 @@ namespace PRS.API.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> SearchProfiles([FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? email, [FromQuery] string? status)
         {
+            var filterFirstName = firstName?.Trim();
+            var filterLastName = lastName?.Trim();
+            var filterEmail = email?.Trim();
+            var filterStatus = status?.Trim();
+
             var allProfiles = await _unitOfWork.PersonnelGuids.GetAllAsync();
             var query = allProfiles.AsEnumerable();
 
-            if (!string.IsNullOrWhiteSpace(firstName))
-                query = query.Where(p => p.Name != null && p.Name.Contains(firstName, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(filterFirstName))
+                query = query.Where(p => p.Name != null && p.Name.Contains(filterFirstName, StringComparison.OrdinalIgnoreCase));
 
-            if (!string.IsNullOrWhiteSpace(lastName))
-                query = query.Where(p => p.Name != null && p.Name.Contains(lastName, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(filterLastName))
+                query = query.Where(p => p.Name != null && p.Name.Contains(filterLastName, StringComparison.OrdinalIgnoreCase));
 
-            if (!string.IsNullOrWhiteSpace(email))
-                query = query.Where(p => p.Email_ID != null && p.Email_ID.Contains(email, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(filterEmail))
+                query = query.Where(p => p.Email_ID != null && p.Email_ID.Contains(filterEmail, StringComparison.OrdinalIgnoreCase));
 
-            if (!string.IsNullOrWhiteSpace(status) && status != "All")
+            if (!string.IsNullOrWhiteSpace(filterStatus) && !filterStatus.Equals("All", StringComparison.OrdinalIgnoreCase))
             {
-                // <--- Now directly comparing the string to "Active"
-                query = query.Where(p => p.Record_Status != null && p.Record_Status.Equals(status, StringComparison.OrdinalIgnoreCase)); 
+                query = query.Where(p => p.Record_Status != null && p.Record_Status.Equals(filterStatus, StringComparison.OrdinalIgnoreCase)); 
             }
             
             var searchResults = query.Select(p => new PersonnelSearchResultDto
@@ -73,6 +77,7 @@ namespace PRS.API.Controllers
                 Name = p.Name,
                 Guid = p.Guid,
                 Employee_ID = p.Employee_ID,
+                Email_ID = p.Email_ID,
                 Record_Status = p.Record_Status
             });
 
