@@ -58,21 +58,23 @@ namespace PRS.Infrastructure.Repositories
                 BatchSize = 5000,          // Streams records in highly stable batches
                 BulkCopyTimeout = 300      // Prevents execution timeouts during heavy network traffic
             };
+            bulkCopy.ColumnMappings.Clear();
 
             // Mapping in-memory DataTable parameters tightly to the database storage profile columns
-            bulkCopy.ColumnMappings.Add("File_ID", "File_ID");
-            bulkCopy.ColumnMappings.Add("Row_Number", "Row_Number");
-            bulkCopy.ColumnMappings.Add("GUID", "GUID");
-            bulkCopy.ColumnMappings.Add("Employment_Status", "Employment_Status");
-            bulkCopy.ColumnMappings.Add("Work_Office", "Work_Office");
-            bulkCopy.ColumnMappings.Add("Line_Of_Service", "Line_Of_Service");
+            bulkCopy.ColumnMappings.Add("File_ID", "FileId");
+            bulkCopy.ColumnMappings.Add("Row_Number", "RowNumber");
+            bulkCopy.ColumnMappings.Add("GUID", "Guid");
+            bulkCopy.ColumnMappings.Add("Employment_Status", "EmploymentStatus");
+            bulkCopy.ColumnMappings.Add("Work_Office", "WorkOffice");
+            bulkCopy.ColumnMappings.Add("Line_Of_Service", "LineOfService");
             bulkCopy.ColumnMappings.Add("Grade", "Grade");
-            bulkCopy.ColumnMappings.Add("Portfolio_Required", "Portfolio_Required");
-            bulkCopy.ColumnMappings.Add("Country_Code", "Country_Code");
-            bulkCopy.ColumnMappings.Add("Validation_Status", "Validation_Status");
-            bulkCopy.ColumnMappings.Add("Processing_Status", "Processing_Status");
-            bulkCopy.ColumnMappings.Add("Created_Date", "Created_Date");
-            bulkCopy.ColumnMappings.Add("Updated_Date", "Updated_Date");
+            bulkCopy.ColumnMappings.Add("Portfolio_Required", "PortfolioRequired");
+            bulkCopy.ColumnMappings.Add("Country_Code", "CountryCode");
+            bulkCopy.ColumnMappings.Add("Validation_Status", "ValidationStatus");
+            bulkCopy.ColumnMappings.Add("Processing_Status", "ProcessingStatus");
+            bulkCopy.ColumnMappings.Add("Created_Date", "CreatedDate");
+            bulkCopy.ColumnMappings.Add("Updated_Date", "UpdatedDate");
+            bulkCopy.ColumnMappings.Add("File_ID", "FileHistoryFileId");
 
             if (stagingData.Rows.Count > 0)
             {

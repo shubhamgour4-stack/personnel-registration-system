@@ -119,7 +119,8 @@ namespace PRS.Application.Services
             var gradeList = await _context.Set<Grade>().ToListAsync();
             var validGrades = gradeList.Select(g => g.Rank.ToLower().Trim()).ToHashSet();
 
-            var targetFileCountry = stagingRecords.FirstOrDefault()?.CountryCode.ToString().Trim();
+            var historyRecord = await _context.Set<MftFileHistory>().FindAsync(fileId);
+            var targetFileCountry = historyRecord!.CountryCode.Trim().ToUpper();
             
             var officeList = await _context.Set<WorkOfficeLocation>()
                 .Where(o => o.Country_Code == targetFileCountry)
@@ -183,13 +184,15 @@ namespace PRS.Application.Services
 
                 if (invalidStaging.Any())
                 {
+                    var historyRef = await _context.Set<MftFileHistory>().FindAsync(fileId);
                     var errorLogs = invalidStaging.Select(inv => new MftFileError
                     {
                         FileId = fileId,
                         RowNumber = inv.RowNumber,
                         Guid = inv.Guid,
                         ErrorMessage = inv.ValidationMessage ?? "Unspecified Domain Validation Restriction Fault.",
-                        CreatedDate = DateTime.UtcNow
+                        CreatedDate = DateTime.UtcNow,
+                        FileHistory = historyRef
                     });
                     await _context.Set<MftFileError>().AddRangeAsync(errorLogs);
                 }

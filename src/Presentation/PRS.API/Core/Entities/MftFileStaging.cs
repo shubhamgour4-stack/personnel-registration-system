@@ -13,7 +13,7 @@ namespace PRS.Core.Entities
         public string? LineOfService { get; set; }
         public string? Grade { get; set; }
         public string? PortfolioRequired { get; set; }
-        public char CountryCode { get; set; } // Tracks file origin country map
+        public string CountryCode { get; set; } = null!; // Change this from char to string // Tracks file origin country map
         public string ValidationStatus { get; set; } = "PENDING";
         public string? ValidationMessage { get; set; }
         public string ProcessingStatus { get; set; } = "RECEIVED";
