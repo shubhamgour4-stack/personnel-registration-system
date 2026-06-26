@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  sftpgo-mft-gateway:
+    image: ghcr.io/drakkan/sftpgo:v2.6-alpine
+    container_name: sftpgo_mft_gateway
+    ports:
+      - "2022:2022"  # SFTP Protocol Port Interface
+      - "8080:8080"  # Admin Dashboard UI Panel Web Gateway
+    environment:
+      - SFTPGO_LOG_LEVEL=info
+      - SFTPGO_HTTPD__BINDINGS__0__PORT=8080
+      - SFTPGO_DATA_PROVIDER__ENGINE=sqlite # Lightweight internal tracking provider
+    volumes:
+      - sftpgo_data_matrix:/var/lib/sftpgo
+    restart: always
+
+volumes:
+  sftpgo_data_matrix:
+    driver: local
