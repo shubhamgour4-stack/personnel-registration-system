@@ -26,7 +26,6 @@ stages:
         packageType: 'sdk'
         version: '$(dotNetVersion)'
 
-    # Explicitly navigates into the real subfolder structure before executing native dotnet tools
     - script: |
         cd Personnel-Registration-System
         dotnet restore Personnel-Registration-System.sln
@@ -64,7 +63,6 @@ stages:
       inputs:
         versionSpec: '$(nodeVersion)'
 
-    # Explicit path navigation through the nested parent layout to find prs-ui cleanly
     - script: |
         cd Personnel-Registration-System/prs-ui
         npm ci
