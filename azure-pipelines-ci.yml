@@ -26,7 +26,7 @@ stages:
         packageType: 'sdk'
         version: '$(dotNetVersion)'
 
-    # Navigates into the subfolder wrapper to invoke restore and build commands cleanly
+    # Explicitly navigates into the real subfolder structure before executing native dotnet tools
     - script: |
         cd Personnel-Registration-System
         dotnet restore Personnel-Registration-System.sln
@@ -49,7 +49,7 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Vault Backend Artifact Archive'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/backend'
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/backend'
         ArtifactName: 'backend-drop'
         publishLocation: 'Container'
 
@@ -64,7 +64,7 @@ stages:
       inputs:
         versionSpec: '$(nodeVersion)'
 
-    # Navigates cleanly through the nested parent folder structural layout
+    # Explicit path navigation through the nested parent layout to find prs-ui cleanly
     - script: |
         cd Personnel-Registration-System/prs-ui
         npm ci
@@ -78,6 +78,6 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Vault Frontend Artifact Archive'
       inputs:
-        PathtoPublish: 'Personnel-Registration-System/prs-ui/dist/prs-ui/browser'
+        pathtoPublish: 'Personnel-Registration-System/prs-ui/dist/prs-ui/browser'
         ArtifactName: 'frontend-drop'
         publishLocation: 'Container'
