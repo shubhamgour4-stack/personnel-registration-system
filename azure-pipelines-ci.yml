@@ -26,13 +26,15 @@ stages:
         packageType: 'sdk'
         version: '$(dotNetVersion)'
 
-    # Fixed path: targeting the solution file directly via wildcards to avoid manual cd errors
+    # Explicitly navigates into the real subfolder structure before executing native dotnet tools
     - script: |
-        dotnet restore **/Personnel-Registration-System.sln
+        cd Personnel-Registration-System
+        dotnet restore Personnel-Registration-System.sln
       displayName: 'Restore NuGet Packages Cache'
 
     - script: |
-        dotnet build **/Personnel-Registration-System.sln --configuration $(buildConfiguration) --no-restore
+        cd Personnel-Registration-System
+        dotnet build Personnel-Registration-System.sln --configuration $(buildConfiguration) --no-restore
       displayName: 'Compile Code Binaries'
 
     - task: DotNetCoreCLI@2
@@ -40,7 +42,7 @@ stages:
       inputs:
         command: 'publish'
         publishWebProjects: false
-        projects: '**/PRS.API.csproj'
+        projects: 'Personnel-Registration-System/src/Presentation/PRS.API/PRS.API.csproj'
         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
         zipAfterPublish: true
 
@@ -62,20 +64,20 @@ stages:
       inputs:
         versionSpec: '$(nodeVersion)'
 
-    # Fixed path: navigating using workspace wildcards to locate the UI folder safely
+    # Explicit path navigation through the nested parent layout to find prs-ui cleanly
     - script: |
-        cd $(System.DefaultWorkingDirectory)/prs-ui || cd $(System.DefaultWorkingDirectory)/**/prs-ui
+        cd Personnel-Registration-System/prs-ui
         npm ci
       displayName: 'Restore Node Packages Modules Cache'
 
     - script: |
-        cd $(System.DefaultWorkingDirectory)/prs-ui || cd $(System.DefaultWorkingDirectory)/**/prs-ui
+        cd Personnel-Registration-System/prs-ui
         npm run build -- --configuration=production
       displayName: 'Compile Angular Client Production Distribution Package'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Vault Frontend Artifact Archive'
       inputs:
-        pathtoPublish: '**/prs-ui/dist/prs-ui/browser'
+        pathtoPublish: 'Personnel-Registration-System/prs-ui/dist/prs-ui/browser'
         ArtifactName: 'frontend-drop'
         publishLocation: 'Container'
