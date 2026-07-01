@@ -26,10 +26,10 @@ stages:
         packageType: 'sdk'
         version: '$(dotNetVersion)'
 
-    - script: dotnet restore PersonnelRegistrationSystem.sln
+    - script: dotnet restore **/*.sln
       displayName: 'Restore NuGet Packages Cache'
 
-    - script: dotnet build PersonnelRegistrationSystem.sln --configuration $(buildConfiguration) --no-restore
+    - script: dotnet build **/*.sln --configuration $(buildConfiguration) --no-restore
       displayName: 'Compile Code Binaries'
 
     - task: DotNetCoreCLI@2
