@@ -26,17 +26,23 @@ stages:
         packageType: 'sdk'
         version: '$(dotNetVersion)'
 
-    - script: dotnet restore **/*.sln
+    # Navigates into the subfolder wrapper to invoke restore and build commands cleanly
+    - script: |
+        cd Personnel-Registration-System
+        dotnet restore Personnel-Registration-System.sln
       displayName: 'Restore NuGet Packages Cache'
 
-    - script: dotnet build **/*.sln --configuration $(buildConfiguration) --no-restore
+    - script: |
+        cd Personnel-Registration-System
+        dotnet build Personnel-Registration-System.sln --configuration $(buildConfiguration) --no-restore
       displayName: 'Compile Code Binaries'
 
     - task: DotNetCoreCLI@2
       displayName: 'Publish Production Payload Zip'
       inputs:
         command: 'publish'
-        publishWebProjects: true
+        publishWebProjects: false
+        projects: 'Personnel-Registration-System/src/Presentation/PRS.API/PRS.API.csproj'
         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
         zipAfterPublish: true
 
@@ -58,19 +64,20 @@ stages:
       inputs:
         versionSpec: '$(nodeVersion)'
 
+    # Navigates cleanly through the nested parent folder structural layout
     - script: |
-        cd prs-ui
+        cd Personnel-Registration-System/prs-ui
         npm ci
       displayName: 'Restore Node Packages Modules Cache'
 
     - script: |
-        cd prs-ui
+        cd Personnel-Registration-System/prs-ui
         npm run build -- --configuration=production
       displayName: 'Compile Angular Client Production Distribution Package'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Vault Frontend Artifact Archive'
       inputs:
-        PathtoPublish: 'prs-ui/dist/prs-ui/browser'
+        PathtoPublish: 'Personnel-Registration-System/prs-ui/dist/prs-ui/browser'
         ArtifactName: 'frontend-drop'
         publishLocation: 'Container'
